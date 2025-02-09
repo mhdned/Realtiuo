@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  BUYER
+  REALTOR
+  ADMIN
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  name            String
+  phone_number    String
+  email           String
+  passsword       String
+  user_type       UserType
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  homes           Home[]
+  buyer_message   Message[] @relation("buyer_messages")
+  realtor_message Message[] @relation("realtor_messages")
+}
+
+enum PropertyType {
+  RESIDENTIAL
+  CONDO
+}
+
+model Home {
+  id                  Int          @id @default(autoincrement())
+  address             String
+  number_of_bedrooms  Int
+  number_of_bathrooms Float
+  city                String
+  price               Float
+  land_size           Float
+  propertyType        PropertyType
+  listed_date         DateTime     @default(now())
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @updatedAt
+  messages            Message[]
+  images              Image[]
+  realtor             User         @relation(fields: [realtor_id], references: [id])
+  realtor_id          Int
+}
+
+model Image {
+  id         Int      @id @default(autoincrement())
+  url        String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  home       Home     @relation(fields: [home_id], references: [id])
+  home_id    Int
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  message    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  home       Home     @relation(fields: [home_id], references: [id])
+  home_id    Int
+  realtor    User     @relation("realtor_messages", fields: [realtor_id], references: [id])
+  realtor_id Int
+  buyer      User     @relation("buyer_messages", fields: [buyer_id], references: [id])
+  buyer_id   Int
+}
