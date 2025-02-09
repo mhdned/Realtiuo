@@ -2,6 +2,8 @@
 
 #### Real Estate Application
 
+This is a sample real estate website built with Nest.js, designed for demonstration purposes on my GitHub profile. The project showcases a structured and scalable backend using Nest.js, featuring property listings, user authentication, and basic CRUD operations. While this is not a production-ready application, it serves as a foundation for building real estate platforms using modern backend technologies.
+
 > Note: This project is intended to be a sample project for my GitHub profile and is not an official release.
 
 ## Features
