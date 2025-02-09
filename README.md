@@ -33,7 +33,7 @@ This project is only a **sample application** created to learn **Nest.js** and i
 
 <p align="left">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=nodejs,npm,nestjs,postgresql,ts,jest," />
+    <img src="https://skillicons.dev/icons?i=nodejs,npm,nestjs,postgresql,prisma,ts,jest," />
   </a>
 </p>
 
