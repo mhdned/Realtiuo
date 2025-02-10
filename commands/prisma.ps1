@@ -2,7 +2,7 @@
 npx prisma init
 
 # push schema in database
-npm prisma db schema
+npx prisma db schema
 
 # prisma studio and managment models
 npx prisma studio
