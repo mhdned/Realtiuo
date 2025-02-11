@@ -1,6 +1,17 @@
-import { Controller, Delete, Get, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { HomeService } from './home.service';
-import { ResponseHomeDTO } from 'src/dtos/home.dto';
+import { CreateHomeDTO, ResponseHomeDTO } from 'src/dtos/home.dto';
+import { PropertyType } from '@prisma/client';
 
 @Controller('home')
 export class HomeController {
@@ -8,21 +19,35 @@ export class HomeController {
 
   @Get()
   getHomes(
-    @Query('city') city: string,
-    @Query('minPrice') minPrice: string,
-    @Query('maxPrice') maxPrice: string,
-    @Query('propertyType') propertyType: string,
+    @Query('city') city?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+    @Query('propertyType') propertyType?: PropertyType,
   ): Promise<ResponseHomeDTO[]> {
-    return this.homeService.getHomes();
+    const price =
+      minPrice || maxPrice
+        ? {
+            ...(minPrice && { gte: parseFloat(minPrice) }),
+            ...(maxPrice && { lte: parseFloat(maxPrice) }),
+          }
+        : undefined;
+
+    const filters = {
+      ...(city && { city }),
+      price,
+      ...(propertyType && { propertyType }),
+    };
+
+    return this.homeService.getHomes(filters);
   }
 
   @Get(':id')
-  getHome() {
-    return {};
+  getHome(@Param('id', ParseIntPipe) id: number) {
+    return this.homeService.getHomeByID(id);
   }
 
   @Post()
-  createHome() {
+  createHome(@Body() body: CreateHomeDTO) {
     return {};
   }
 
