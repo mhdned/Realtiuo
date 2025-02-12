@@ -12,6 +12,27 @@ interface GetHomesParam {
   propertyType: PropertyType;
 }
 
+interface CreateHomeParam {
+  city: string;
+  price: number;
+  address: string;
+  landSize: number;
+  numberOfBedrooms: number;
+  numberOfBathrooms: number;
+  propertyType: PropertyType;
+  images: { url: string }[];
+}
+
+interface UpdateHomeParam {
+  city?: string;
+  price?: number;
+  address?: string;
+  landSize?: number;
+  numberOfBedrooms?: number;
+  numberOfBathrooms?: number;
+  propertyType?: PropertyType;
+}
+
 @Injectable()
 export class HomeService {
   constructor(private readonly prismaService: PrismaService) {}
@@ -78,5 +99,65 @@ export class HomeService {
     if (!home) throw new NotFoundException();
 
     return new ResponseHomeDTO(home);
+  }
+
+  async createHome({
+    address,
+    city,
+    price,
+    landSize,
+    images,
+    numberOfBathrooms,
+    numberOfBedrooms,
+    propertyType,
+  }: CreateHomeParam) {
+    const newHome = await this.prismaService.home.create({
+      data: {
+        address,
+        city,
+        price,
+        land_size: landSize,
+        number_of_bathrooms: numberOfBathrooms,
+        number_of_bedrooms: numberOfBedrooms,
+        propertyType: propertyType,
+        realtor_id: 10,
+      },
+    });
+
+    const homeImages = images.map((image) => {
+      return { ...image, home_id: newHome.id };
+    });
+
+    await this.prismaService.image.createMany({ data: homeImages });
+
+    return new ResponseHomeDTO({ ...newHome, images });
+  }
+
+  async updateHomeByID(id: number, data: UpdateHomeParam) {
+    const home = await this.getHomeByID(id);
+    const updatedHome = await this.prismaService.home.update({
+      where: {
+        id: home.id,
+      },
+      data,
+    });
+
+    return new ResponseHomeDTO(updatedHome);
+  }
+
+  async deleteHomeByID(id: number) {
+    const home = await this.getHomeByID(id);
+    if (!home) throw new NotFoundException();
+    await this.prismaService.image.deleteMany({
+      where: {
+        home_id: home.id,
+      },
+    });
+
+    await this.prismaService.home.delete({
+      where: {
+        id: home.id,
+      },
+    });
   }
 }
