@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { SigninDTO, SignupDTO, GenerateProductKeyDTO } from 'src/dtos/auth.dto';
 import { UserType } from '@prisma/client';
 import { User, UserInfo } from '../decorators/user.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -40,6 +41,7 @@ export class AuthController {
     return this.authService.signin(body);
   }
 
+  @Roles(UserType.ADMIN)
   @Post('key')
   generateProductKey(@Body() { email, userType }: GenerateProductKeyDTO) {
     return this.authService.generateProductKey(email, userType);
