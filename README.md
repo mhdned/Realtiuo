@@ -40,4 +40,3 @@ This project is only a **sample application** created to learn **Nest.js** and i
 ## License
 
 This project is **unlicensed**.
-
